@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Realtor.ca Enhanced",
+  "description": "Enhance the Realtor.ca experience with additional features and improvements.",
+  "version": "1.0.0",
+  "action": {
+    "default_popup": "src/popup/popup.html"
+  },
+  "background": {
+    "service_worker": "src/background.ts"
+  },
+  "content_scripts": [
+    {
+      "js": ["src/content/content.tsx"],
+      "matches": ["https://www.realtor.ca/*"]
+    }
+  ],
+  "permissions": ["storage", "activeTab", "scripting"]
+}
