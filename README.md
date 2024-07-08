@@ -1,30 +1,44 @@
-# React + TypeScript + Vite
+# Realtor.ca Enhanced WebExtension
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a web extension that adds certain features I wish realtor.ca supported like:
 
-Currently, two official plugins are available:
+- Allows saving mortgage details like: Downpayment %, Mortgage Rate %, Ammortization Period, and shows monthly estimated costs next to Property list price.
+- Cost analysis for a property listing showing Upfront and Monthly cost breakdown.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Configuration
 
-## Expanding the ESLint configuration
+After installing the web extension you can open up the extension and adjust the following configuration options which are used to calculate monthly cost for each property listing.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- Downpayment % (default 20%): Determines how much downpayment you wish to pay based off the listing price of the property. This will be added to Upfront costs.
 
-- Configure the top-level `parserOptions` property like this:
+- Mortgage Rate % (default 5%): Determines how much compounding interest you will pay over the amortization period of your mortgage. At the time of writing (Q2 2024) most banks are offering around 5-6% rates.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+- Amortization Period (default 25 years): The number of years the mortgage will be paid off. Most loans feature a 25 year amortization period but some vendors may offer a maximum of 30 years.of course there is also the option of paying off the loan quicker and picking a shorter period.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Cost Analysis
+
+### Upfront costs
+
+Upfront costs are costs which may be paid upon purchasing your new home, these include:
+
+- Downpayment amount
+- Land transfer tax
+- Lawyer fees
+- Title fees
+
+### Monthly fees
+
+Ongoing monthly fees are calculated to give a better sense on how much a home will cost factoring in everything you will need to pay. It is important to factor in each of these details to determine if you can afford a home. 
+
+
+- Mortgage payment
+- Property taxes
+- Maintenance fees
+
+Additional expenses you may need to consider when determining a homes affordability are:
+
+- Heat/Hydro/Water
+- Home insurance
+- Home maintenance
+- Commuting (gasoline, insurance, maintenance, parking)
+
