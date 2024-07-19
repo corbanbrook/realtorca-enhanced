@@ -1,9 +1,4 @@
-export interface Config {
-  downpaymentPercent: number;
-  mortgageRatePercent: number;
-  amortizationPeriod: number;
-  firstTimeHomeBuyer: boolean;
-}
+import { Config } from "./types";
 
 export const defaults: Config = {
   downpaymentPercent: 20,

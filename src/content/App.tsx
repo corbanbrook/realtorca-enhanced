@@ -1,26 +1,43 @@
 import { useEffect, useState } from "react";
 import { formatCurrency, getElementValue, getTotalMonthlyCost } from "../utils";
-import { Config, defaults } from "../config";
-import { MonthlyCosts } from "./components/MonthlyCosts";
-import { UpfrontCosts } from "./components/UpfrontCosts";
-import { PropertyDetails } from "../types";
+import { defaults } from "../config";
+import { Config, PropertyDetails } from "../types";
+import { CostAnalysis } from "./components/CostAnalysis";
+import { calculateLandTransferTax } from "./utils/ltt";
 
-const details: PropertyDetails = {
-  listingPrice: getElementValue(document.querySelector("#listingPriceValue")),
-  annualPropertyTaxes: getElementValue(
-    document.querySelector(
-      "#propertyDetailsSectionContentSubCon_AnnualPropertyTaxes .propertyDetailsSectionContentValue"
-    )
-  ),
-  monthlyMaintenanceFees: getElementValue(
-    document.querySelector(
-      "#propertyDetailsSectionVal_MonthlyMaintenanceFees .propertyDetailsSectionContentValue"
-    )
-  ),
-};
+// Query values from the page
+const listingAddress =
+  document.querySelector("#listingAddress")?.lastChild?.textContent;
+const city = listingAddress?.split(",")[0].trim() || "";
+const province = listingAddress?.split(",")[1].trim().split(" ")[0] || "";
+const listingPrice = getElementValue(
+  document.querySelector("#listingPriceValue")
+);
+const annualPropertyTaxes = getElementValue(
+  document.querySelector(
+    "#propertyDetailsSectionContentSubCon_AnnualPropertyTaxes .propertyDetailsSectionContentValue"
+  )
+);
+const monthlyMaintenanceFees = getElementValue(
+  document.querySelector(
+    "#propertyDetailsSectionVal_MonthlyMaintenanceFees .propertyDetailsSectionContentValue"
+  )
+);
 
 export const App = () => {
   const [config, setConfig] = useState<Config>(defaults);
+
+  const details: PropertyDetails = {
+    listingPrice,
+    annualPropertyTaxes,
+    monthlyMaintenanceFees,
+    landTransferTax: calculateLandTransferTax(
+      province,
+      city,
+      listingPrice,
+      config.firstTimeHomeBuyer
+    ), // XXX This should be calculated based on the location
+  };
 
   useEffect(() => {
     // Update the config state with the values from storage
@@ -57,19 +74,15 @@ export const App = () => {
     if (!el) {
       el = document.createElement("div");
       el.id = "monthlyCostEstimate";
-      el.setAttribute("style", "font-weight: bold; color: green;");
+      el.setAttribute(
+        "style",
+        "font-weight: bold; color: green; font-size: 22px;"
+      );
       target?.after(el);
     }
 
     el.textContent = `${monthlyCost}/month`;
   }, [config]);
 
-  return (
-    <div className="propertyDetailsSectionCon">
-      <h1>Cost Analysis</h1>
-
-      <UpfrontCosts config={config} details={details} />
-      <MonthlyCosts config={config} details={details} />
-    </div>
-  );
+  return <CostAnalysis config={config} details={details} />;
 };

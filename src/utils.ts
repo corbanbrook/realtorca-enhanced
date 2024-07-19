@@ -1,7 +1,4 @@
-// totalPayments should be the total number of payments expected to be made for the life of the loan: years * 12
-
-import { Config } from "./config";
-import { PropertyDetails } from "./types";
+import { Config, PropertyDetails } from "./types";
 
 export const formatCurrency = (value: number) => {
   return value.toLocaleString("en", {
@@ -16,6 +13,7 @@ export const getElementValue = (el: Element | null) => {
   return parseFloat(textContent);
 };
 
+// totalPayments should be the total number of payments expected to be made for the life of the loan: years * 12
 // interestRate: eg. 6.2% should be passed as 0.062
 export const getMonthlyMortgagePayment = (
   startingLoanAmount: number,
