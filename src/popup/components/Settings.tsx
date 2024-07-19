@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Config, defaults } from "../../config";
+import { defaults } from "../../config";
+import { Config } from "../../types";
 
 enum MessageType {
   UPDATE = "UPDATE",
