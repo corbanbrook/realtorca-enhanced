@@ -8,7 +8,7 @@ import { calculateLandTransferTax } from "./utils/ltt";
 // Query values from the page
 const listingAddress =
   document.querySelector("#listingAddress")?.lastChild?.textContent;
-const city = listingAddress?.split(",")[0].trim() || "";
+const city = listingAddress?.split(",")[0].trim().split(" ")[0] || "";
 const province = listingAddress?.split(",")[1].trim().split(" ")[0] || "";
 const listingPrice = getElementValue(
   document.querySelector("#listingPriceValue")
