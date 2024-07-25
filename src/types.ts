@@ -3,6 +3,7 @@ export interface Config {
   mortgageRatePercent: number;
   amortizationPeriod: number;
   firstTimeHomeBuyer: boolean;
+  paymentFrequency: PaymentFrequency;
 }
 
 export interface PropertyDetails {
@@ -18,3 +19,11 @@ export interface LandTransferTax {
   rebate: number;
   total: number;
 }
+
+export type PaymentFrequency =
+  | "monthly"
+  | "semi-monthly"
+  | "bi-weekly"
+  | "bi-weekly-accelerated"
+  | "weekly"
+  | "weekly-accelerated";

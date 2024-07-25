@@ -1,5 +1,9 @@
 import { Config, PropertyDetails } from "../../types";
-import { formatCurrency, getMonthlyMortgagePayment } from "../../utils";
+import {
+  formatCurrency,
+  getMortgagePayment,
+  getPaymentsPerYear,
+} from "../../utils";
 import { CostRow } from "./CostRow";
 
 interface MonthlyCostsProps {
@@ -14,11 +18,15 @@ export const MonthlyCosts = (props: MonthlyCostsProps) => {
     (config.downpaymentPercent / 100) * details.listingPrice;
   const mortgageAmount = details.listingPrice - downpaymentAmount;
   const monthlyPropertyTaxes = details.annualPropertyTaxes / 12;
-  const monthlyMortgagePayment = getMonthlyMortgagePayment(
+  const mortgagePayment = getMortgagePayment(
+    config.paymentFrequency,
     mortgageAmount,
-    config.amortizationPeriod * 12,
-    config.mortgageRatePercent / 100
+    config.mortgageRatePercent / 100,
+    config.amortizationPeriod
   );
+  const paymentsByYear = getPaymentsPerYear(config.paymentFrequency);
+  const annualMortgagePayment = mortgagePayment * paymentsByYear;
+  const monthlyMortgagePayment = annualMortgagePayment / 12;
 
   const total =
     monthlyMortgagePayment +

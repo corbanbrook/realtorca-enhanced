@@ -5,4 +5,5 @@ export const defaults: Config = {
   mortgageRatePercent: 5,
   amortizationPeriod: 25,
   firstTimeHomeBuyer: false,
+  paymentFrequency: "monthly",
 };

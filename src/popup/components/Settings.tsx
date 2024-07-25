@@ -97,6 +97,29 @@ export const Settings = () => {
           />
         </div>
       </section>
+
+      <section>
+        <b>Payment Frequency</b>
+        <div>
+          <select
+            id="payment-frequency"
+            value={config.paymentFrequency}
+            onChange={(ev) => {
+              setConfig((prev) => ({
+                ...prev,
+                paymentFrequency: ev.target.value as Config["paymentFrequency"],
+              }));
+            }}
+          >
+            <option value="monthly">Monthly</option>
+            <option value="semi-monthly">Semi-Monthly</option>
+            <option value="bi-weekly">Bi-Weekly</option>
+            <option value="bi-weekly-accelerated">Bi-Weekly Accelerated</option>
+            <option value="weekly">Weekly</option>
+            <option value="weekly-accelerated">Weekly Accelerated</option>
+          </select>
+        </div>
+      </section>
     </div>
   );
 };

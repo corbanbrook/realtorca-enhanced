@@ -1,4 +1,4 @@
-import { Config, PropertyDetails } from "./types";
+import { Config, PaymentFrequency, PropertyDetails } from "./types";
 
 export const formatCurrency = (value: number) => {
   return value.toLocaleString("en", {
@@ -13,24 +13,75 @@ export const getElementValue = (el: Element | null) => {
   return parseFloat(textContent);
 };
 
-// totalPayments should be the total number of payments expected to be made for the life of the loan: years * 12
-// interestRate: eg. 6.2% should be passed as 0.062
-export const getMonthlyMortgagePayment = (
-  startingLoanAmount: number,
-  totalPayments: number,
+export const getEffectiveAnnualRate = (
+  interestRate: number,
+  compoundingPeriodsPerYear = 2
+) => {
+  return (
+    Math.pow(
+      1 + interestRate / compoundingPeriodsPerYear,
+      compoundingPeriodsPerYear
+    ) - 1
+  );
+};
+
+export const getPaymentsPerYear = (paymentFrequency: PaymentFrequency) => {
+  switch (paymentFrequency) {
+    case "semi-monthly":
+      return 24;
+    case "bi-weekly":
+    case "bi-weekly-accelerated":
+      return 26;
+    case "weekly":
+    case "weekly-accelerated":
+      return 52;
+    case "monthly":
+    default:
+      return 12;
+  }
+};
+
+export const getPaymentFrequencyRate = (
+  paymentFrequency: PaymentFrequency,
   interestRate: number
 ) => {
-  if (interestRate === 0) {
-    return startingLoanAmount / totalPayments;
+  const effectiveAnnualRate = getEffectiveAnnualRate(interestRate);
+  const paymentsPerYear = getPaymentsPerYear(paymentFrequency);
+
+  return Math.pow(1 + effectiveAnnualRate, 1 / paymentsPerYear) - 1;
+};
+
+export const getMortgagePayment = (
+  paymentFrequency: PaymentFrequency,
+  mortgageAmount: number,
+  interestRate: number,
+  amortizationPeriod: number
+): number => {
+  const paymentsPerYear = getPaymentsPerYear(paymentFrequency);
+  const isAccelerated = paymentFrequency.includes("accelerated");
+
+  if (isAccelerated) {
+    const monthlyPayment = getMortgagePayment(
+      "monthly",
+      mortgageAmount,
+      interestRate,
+      amortizationPeriod
+    );
+
+    return (monthlyPayment * 13) / paymentsPerYear;
   }
 
-  const interestRatePerMonth = interestRate / 12;
+  const totalPayments = amortizationPeriod * paymentsPerYear;
+
+  if (interestRate === 0) {
+    return mortgageAmount / (amortizationPeriod * paymentsPerYear);
+  }
+
+  const actualRate = getPaymentFrequencyRate(paymentFrequency, interestRate);
 
   return (
-    (startingLoanAmount *
-      interestRatePerMonth *
-      Math.pow(1 + interestRatePerMonth, totalPayments)) /
-    (Math.pow(1 + interestRatePerMonth, totalPayments) - 1)
+    (mortgageAmount * actualRate * Math.pow(1 + actualRate, totalPayments)) /
+    (Math.pow(1 + actualRate, totalPayments) - 1)
   );
 };
 
@@ -48,11 +99,15 @@ export const getTotalMonthlyCost = (
   const downpaymentAmount =
     (config.downpaymentPercent / 100) * details.listingPrice;
   const mortgageAmount = details.listingPrice - downpaymentAmount;
-  const monlthyMortgagePayment = getMonthlyMortgagePayment(
+  const paymentsPerYear = getPaymentsPerYear(config.paymentFrequency);
+  const mortgagePayment = getMortgagePayment(
+    config.paymentFrequency,
     mortgageAmount,
-    config.amortizationPeriod * 12,
-    config.mortgageRatePercent / 100
+    config.mortgageRatePercent / 100,
+    config.amortizationPeriod
   );
+  const annualMortgagePayment = mortgagePayment * paymentsPerYear;
+  const monlthyMortgagePayment = annualMortgagePayment / 12;
   const monthlyPropertyTaxes = details.annualPropertyTaxes / 12;
 
   return (
